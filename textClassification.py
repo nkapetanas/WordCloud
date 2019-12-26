@@ -9,6 +9,9 @@ from sklearn.feature_extraction.text import HashingVectorizer
 DATASET_PATH_TRAIN = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/train.csv"
 DATASET_PATH_TEST = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/test_without_labels.csv"
 
+# Create the token pattern: TOKENS_ALPHANUMERIC
+TOKENS_ALPHANUMERIC = '[A-Za-z0-9]+(?=\\s+)'
+
 
 def read_dataset(dataset):
     df = pd.read_csv(dataset)
@@ -34,7 +37,7 @@ train_data_cleaned = clean_data(train_data)
 test_data_cleaned = clean_data(test_data)
 
 # create the transform
-vectorizer = HashingVectorizer(decode_error='ignore', n_features=2 ** 18, alternate_sign=False)
+vectorizer = HashingVectorizer(decode_error='ignore', n_features=2 ** 18, alternate_sign=False, token_pattern=TOKENS_ALPHANUMERIC)
 
 # encode document: encodes the sample document as a 2 ** 18-element sparse array
 vectorizer.fit_transform(train_data_cleaned)
