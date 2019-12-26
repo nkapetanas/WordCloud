@@ -1,13 +1,9 @@
 import string
-
-import numpy as np
-import pandas as pd
 from collections import Counter
-from os import path
-from PIL import Image
-from string import punctuation
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+
 import matplotlib.pyplot as plt
+import pandas as pd
+from wordcloud import WordCloud, STOPWORDS
 
 DATASET_PATH_TRAIN = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/train.csv"
 
