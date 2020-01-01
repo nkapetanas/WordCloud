@@ -2,6 +2,7 @@ import string
 
 import pandas as pd
 import nltk
+from sklearn.decomposition import TruncatedSVD
 
 from sklearn.linear_model import SGDClassifier
 from nltk.corpus import stopwords
@@ -17,7 +18,7 @@ from sklearn.metrics import f1_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import HashingVectorizer, CountVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import HashingVectorizer, CountVectorizer, TfidfTransformer, TfidfVectorizer
 
 DATASET_PATH_TRAIN = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/train.csv"
 DATASET_PATH_TEST = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/test_without_labels.csv"
@@ -84,9 +85,8 @@ cls_stats = {}
 kfold = KFold(n_splits=5, random_state=42, shuffle=True)
 
 fold = 0
-
-vectorizer = HashingVectorizer(decode_error='ignore', n_features=2 ** 18, alternate_sign=False,
-                               token_pattern=TOKENS_ALPHANUMERIC)
+svd = TruncatedSVD(n_components=16)
+tfidf_vectorizer = TfidfVectorizer(stop_words=stop)
 
 for train_index, test_index in kfold.split(x_train_data):
     fold += 1
@@ -95,12 +95,13 @@ for train_index, test_index in kfold.split(x_train_data):
     x_train_k, x_test_k = x_train_data.iloc[train_index], x_train_data.iloc[test_index]
     y_train_k, y_test_k = y_train_data.iloc[train_index], y_train_data.iloc[test_index]
 
-
-    X_train = vectorizer.fit_transform(x_train_k)
-    X_test = vectorizer.fit_transform(x_test_k)
+    x_train_k_vectorized= tfidf_vectorizer.fit_transform(x_train_k)
+    x_test_k_vectorized = tfidf_vectorizer.fit_transform(x_test_k)
+    X_reduced = svd.fit_transform(x_train_k_vectorized)
+    X_test = svd.fit_transform(x_test_k_vectorized)
 
     sgd_classifier = SGDClassifier(max_iter=1000, loss='hinge')
-    sgd_classifier.fit(X_train, y_train_k)
+    sgd_classifier.fit(X_reduced, y_train_k)
     predictedValues = sgd_classifier.predict(X_test)
 
     print("Accuracy SGDClassifier: %s"
@@ -112,7 +113,7 @@ for train_index, test_index in kfold.split(x_train_data):
     print("f1:" + str(f1))
 
     rand_forest_classifier = RandomForestClassifier(n_jobs=-1, max_depth=500)
-    rand_forest_classifier.fit(X_train, y_train_k)
+    rand_forest_classifier.fit(X_reduced, y_train_k)
     predictedValues_rand_forest = rand_forest_classifier.predict(X_test)
     print("Accuracy Random ForestClassifier: %s"
           % (accuracy_score(y_test_k, predictedValues)))
@@ -121,4 +122,3 @@ for train_index, test_index in kfold.split(x_train_data):
     print("precision:" + str(precision))
     print("recall:" + str(recall))
     print("f1:" + str(f1))
-
