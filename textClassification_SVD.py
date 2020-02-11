@@ -95,7 +95,7 @@ for train_index, test_index in kfold.split(x_train_data):
     x_train_k, x_test_k = x_train_data.iloc[train_index], x_train_data.iloc[test_index]
     y_train_k, y_test_k = y_train_data.iloc[train_index], y_train_data.iloc[test_index]
 
-    x_train_k_vectorized= tfidf_vectorizer.fit_transform(x_train_k)
+    x_train_k_vectorized = tfidf_vectorizer.fit_transform(x_train_k)
     x_test_k_vectorized = tfidf_vectorizer.fit_transform(x_test_k)
     X_reduced = svd.fit_transform(x_train_k_vectorized)
     X_test = svd.fit_transform(x_test_k_vectorized)

@@ -56,12 +56,28 @@ def clean_data(dataframe):
     return text
 
 
-df = read_dataset(DATASET_PATH_TRAIN)
+def removeSpecialChars(df):
+    df['Content'] = df['Content'].str.replace('\d+', '')
+    df['Content'] = df['Content'].str.replace('_', '')
+    df['Content'] = df['Content'].str.replace('?', '')
+    df['Content'] = df['Content'].str.replace('•', '')
+    df['Content'] = df['Content'].str.replace("@", '')
+    df['Content'] = df['Content'].str.replace('▯', '')
+    df['Content'] = df['Content'].str.replace("'", '')
+    df['Content'] = df['Content'].str.replace(",", "")
+    df['Content'] = df['Content'].str.replace("$", "")
+    return df
 
+df = read_dataset(DATASET_PATH_TRAIN)
 df_Business = df.loc[df['Label'] == "Business"]
 df_Entertainment = df.loc[df['Label'] == "Entertainment"]
 df_Health = df.loc[df['Label'] == "Health"]
 df_Technology = df.loc[df['Label'] == "Technology"]
+
+df_Business = removeSpecialChars(df_Business)
+df_Entertainment = removeSpecialChars(df_Entertainment)
+df_Health = removeSpecialChars(df_Health)
+df_Technology = removeSpecialChars(df_Technology)
 
 text_business = clean_data(df_Business)
 text_entertainment = clean_data(df_Entertainment)
@@ -72,14 +88,3 @@ create_wordClouds(text_business, "Business")
 create_wordClouds(text_entertainment, "Entertainment")
 create_wordClouds(text_health, "Health")
 create_wordClouds(text_technology, "Technology")
-
-# df_Business['Content'] = df_Business['Content'].apply(lambda x : x.strip().capitalize())
-
-# df_Business['Content'] = df_Business['Content'].str.replace('\d+', '')
-# df_Business['Content'] = df_Business['Content'].str.replace('_', '')
-# df_Business['Content'] = df_Business['Content'].str.replace('?', '')
-# df_Business['Content'] = df_Business['Content'].str.replace('•', '')
-# df_Business['Content'] = df_Business['Content'].str.replace("@", '')
-# df_Business['Content'] = df_Business['Content'].str.replace('▯', '')
-# df_Business['Content'] = df_Business['Content'].str.replace("'", '')
-# df_Business['Content'] = df_Business['Content'].str.replace(",", "")
