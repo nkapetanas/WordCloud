@@ -103,8 +103,7 @@ for train_index, test_index in kfold.split(x_train_data):
     sgd_classifier.fit(X_train, y_train_k)
     predictedValues = sgd_classifier.predict(X_test)
 
-    print("Accuracy SGDClassifier: %s"
-          % (accuracy_score(y_test_k, predictedValues)))
+    print("SGDClassifier metrics")
     accuracy, precision, recall, f1 = calculate_metrics(y_test_k, predictedValues)
     print("accuracy:" + str(accuracy))
     print("precision:" + str(precision))
@@ -114,8 +113,8 @@ for train_index, test_index in kfold.split(x_train_data):
     rand_forest_classifier = RandomForestClassifier(n_jobs=-1, max_depth=500)
     rand_forest_classifier.fit(X_train, y_train_k)
     predictedValues_rand_forest = rand_forest_classifier.predict(X_test)
-    print("Accuracy Random ForestClassifier: %s"
-          % (accuracy_score(y_test_k, predictedValues)))
+
+    print("Random Forest metrics")
     accuracy, precision, recall, f1 = calculate_metrics(y_test_k, predictedValues_rand_forest)
     print("accuracy:" + str(accuracy))
     print("precision:" + str(precision))
