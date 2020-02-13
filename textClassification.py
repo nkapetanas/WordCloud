@@ -76,11 +76,11 @@ x_train_data = train_data['Content']
 
 y_train_data = train_data['Label_Encoded']
 
-test_data = test_data['Content']
+test_data_ = test_data['Content']
 
 cls_stats = {}
 
-kfold = KFold(n_splits=2, random_state=42, shuffle=True)
+kfold = KFold(n_splits=5, random_state=42, shuffle=True)
 
 fold = 0
 
@@ -127,6 +127,7 @@ for train_index, test_index in kfold.split(x_train_data):
     scores_rf_precision.append(precision)
     scores_rf_recall.append(recall)
     scores_rf_f1.append(f1)
+
 print("SGDClassifier metrics")
 print("Accuracy:" + str(np.mean(scores_svm_accuracy)))
 print("Precision:" + str(np.mean(scores_svm_precision)))
@@ -139,11 +140,11 @@ print("Precision:" + str(np.mean(scores_rf_precision)))
 print("Recall:" + str(np.mean(scores_rf_recall)))
 
 print("F1:" + str(np.mean(scores_rf_f1)))
-test_data = vectorizer.fit_transform(test_data)
-predictedValues = sgd_classifier.predict(test_data)
 
+test_data_ = vectorizer.fit_transform(test_data_)
 
-predictedValues_rand_forest = rand_forest_classifier.predict(test_data)
+predictedValues = sgd_classifier.predict(test_data_)
+predictedValues_rand_forest = rand_forest_classifier.predict(test_data_)
 
 
 createCSV(predictedValues, "testSet_categories.csv")
