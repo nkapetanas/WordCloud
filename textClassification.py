@@ -89,13 +89,13 @@ vectorizer = HashingVectorizer(decode_error='ignore', n_features=2 ** 18, altern
 scores_svm_accuracy = []
 scores_svm_precision = []
 scores_svm_recall = []
-
 scores_svm_f1 = []
+
 scores_rf_accuracy = []
 scores_rf_precision = []
 scores_rf_recall = []
-
 scores_rf_f1 = []
+
 sgd_classifier = SGDClassifier(max_iter=1000, loss='hinge')
 
 rand_forest_classifier = RandomForestClassifier(n_jobs=-1, max_depth=500)
@@ -132,13 +132,12 @@ print("SGDClassifier metrics")
 print("Accuracy:" + str(np.mean(scores_svm_accuracy)))
 print("Precision:" + str(np.mean(scores_svm_precision)))
 print("Recall:" + str(np.mean(scores_svm_recall)))
-
 print("F1:" + str(np.mean(scores_svm_f1)))
+
 print("Random Forest metrics")
 print("Accuracy:" + str(np.mean(scores_rf_accuracy)))
 print("Precision:" + str(np.mean(scores_rf_precision)))
 print("Recall:" + str(np.mean(scores_rf_recall)))
-
 print("F1:" + str(np.mean(scores_rf_f1)))
 
 test_data_ = vectorizer.fit_transform(test_data_)

@@ -58,6 +58,15 @@ def calculate_metrics(y_actual, y_predicted):
 
     return accuracy, precision, recall, f1
 
+scores_svm_accuracy = []
+scores_svm_precision = []
+scores_svm_recall = []
+scores_svm_f1 = []
+
+scores_rf_accuracy = []
+scores_rf_precision = []
+scores_rf_recall = []
+scores_rf_f1 = []
 
 train_data = read_dataset(DATASET_PATH_TRAIN)
 test_data = read_dataset(DATASET_PATH_TEST)
@@ -84,7 +93,11 @@ cls_stats = {}
 
 kfold = KFold(n_splits=5, random_state=42, shuffle=True)
 
+sgd_classifier = SGDClassifier(max_iter=1000, loss='hinge')
+rand_forest_classifier = RandomForestClassifier(n_jobs=-1, max_depth=500)
+
 fold = 0
+
 svd = TruncatedSVD(n_components=16)
 tfidf_vectorizer = TfidfVectorizer(stop_words=stop)
 
@@ -97,28 +110,38 @@ for train_index, test_index in kfold.split(x_train_data):
 
     x_train_k_vectorized = tfidf_vectorizer.fit_transform(x_train_k)
     x_test_k_vectorized = tfidf_vectorizer.fit_transform(x_test_k)
+
     X_reduced = svd.fit_transform(x_train_k_vectorized)
     X_test = svd.fit_transform(x_test_k_vectorized)
 
-    sgd_classifier = SGDClassifier(max_iter=1000, loss='hinge')
+
     sgd_classifier.fit(X_reduced, y_train_k)
     predictedValues = sgd_classifier.predict(X_test)
 
-    print("Accuracy SGDClassifier: %s"
-          % (accuracy_score(y_test_k, predictedValues)))
     accuracy, precision, recall, f1 = calculate_metrics(y_test_k, predictedValues)
-    print("accuracy:" + str(accuracy))
-    print("precision:" + str(precision))
-    print("recall:" + str(recall))
-    print("f1:" + str(f1))
 
-    rand_forest_classifier = RandomForestClassifier(n_jobs=-1, max_depth=500)
+    scores_svm_accuracy.append(accuracy)
+    scores_svm_precision.append(precision)
+    scores_svm_recall.append(recall)
+    scores_svm_f1.append(f1)
+
     rand_forest_classifier.fit(X_reduced, y_train_k)
     predictedValues_rand_forest = rand_forest_classifier.predict(X_test)
-    print("Accuracy Random ForestClassifier: %s"
-          % (accuracy_score(y_test_k, predictedValues)))
+
     accuracy, precision, recall, f1 = calculate_metrics(y_test_k, predictedValues_rand_forest)
-    print("accuracy:" + str(accuracy))
-    print("precision:" + str(precision))
-    print("recall:" + str(recall))
-    print("f1:" + str(f1))
+    scores_rf_accuracy.append(accuracy)
+    scores_rf_precision.append(precision)
+    scores_rf_recall.append(recall)
+    scores_rf_f1.append(f1)
+
+print("SGDClassifier metrics")
+print("Accuracy:" + str(np.mean(scores_svm_accuracy)))
+print("Precision:" + str(np.mean(scores_svm_precision)))
+print("Recall:" + str(np.mean(scores_svm_recall)))
+print("F1:" + str(np.mean(scores_svm_f1)))
+
+print("Random Forest metrics")
+print("Accuracy:" + str(np.mean(scores_rf_accuracy)))
+print("Precision:" + str(np.mean(scores_rf_precision)))
+print("Recall:" + str(np.mean(scores_rf_recall)))
+print("F1:" + str(np.mean(scores_rf_f1)))
