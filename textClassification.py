@@ -66,7 +66,6 @@ clean_data(train_data)
 clean_data(test_data)
 Encoder = LabelEncoder()
 
-# list_of_train_data = np.array_split(train_data, 5)
 
 train_data['Label_Encoded'] = Encoder.fit_transform(train_data['Label'])
 # separating features for our model from the target variable
