@@ -59,9 +59,7 @@ def calculate_metrics(y_actual, y_predicted):
 train_data = read_dataset(DATASET_PATH_TRAIN)
 
 test_data = read_dataset(DATASET_PATH_TEST)
-classifier = {
-    'SGD': SGDClassifier(max_iter=5)
-}
+
 # cleaning of data
 clean_data(train_data)
 

@@ -58,6 +58,7 @@ def calculate_metrics(y_actual, y_predicted):
 
     return accuracy, precision, recall, f1
 
+
 scores_svm_accuracy = []
 scores_svm_precision = []
 scores_svm_recall = []
@@ -71,9 +72,6 @@ scores_rf_f1 = []
 train_data = read_dataset(DATASET_PATH_TRAIN)
 test_data = read_dataset(DATASET_PATH_TEST)
 
-classifier = {
-    'SGD': SGDClassifier(max_iter=5)
-}
 # cleaning of data
 clean_data(train_data)
 clean_data(test_data)
@@ -81,14 +79,11 @@ clean_data(test_data)
 Encoder = LabelEncoder()
 train_data['Label_Encoded'] = Encoder.fit_transform(train_data['Label'])
 
-
 # separating features for our model from the target variable
 x_train_data = train_data['Content']
 y_train_data = train_data['Label_Encoded']
 
 test_data = test_data['Content']
-
-cls_stats = {}
 
 kfold = KFold(n_splits=5, random_state=42, shuffle=True)
 
@@ -112,7 +107,6 @@ for train_index, test_index in kfold.split(x_train_data):
 
     X_reduced = svd.fit_transform(x_train_k_vectorized)
     X_test = svd.fit_transform(x_test_k_vectorized)
-
 
     sgd_classifier.fit(X_reduced, y_train_k)
     predictedValues = sgd_classifier.predict(X_test)
