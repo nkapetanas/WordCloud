@@ -51,9 +51,9 @@ def createCSV(prediction, csvName):
 
 def calculate_metrics(y_actual, y_predicted):
     accuracy = accuracy_score(y_actual, y_predicted)
-    precision = precision_score(y_actual, y_predicted, average='micro')
-    recall = recall_score(y_actual, y_predicted, average='micro')
-    f1 = f1_score(y_actual, y_predicted, average='micro')
+    precision = precision_score(y_actual, y_predicted, average='macro')
+    recall = recall_score(y_actual, y_predicted, average='macro')
+    f1 = f1_score(y_actual, y_predicted, average='macro')
 
     return accuracy, precision, recall, f1
 train_data = read_dataset(DATASET_PATH_TRAIN)

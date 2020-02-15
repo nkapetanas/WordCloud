@@ -52,9 +52,9 @@ def clean_data(dataframe):
 
 def calculate_metrics(y_actual, y_predicted):
     accuracy = accuracy_score(y_actual, y_predicted)
-    precision = precision_score(y_actual, y_predicted, average='micro')
-    recall = recall_score(y_actual, y_predicted, average='micro')
-    f1 = f1_score(y_actual, y_predicted, average='micro')
+    precision = precision_score(y_actual, y_predicted, average='macro')
+    recall = recall_score(y_actual, y_predicted, average='macro')
+    f1 = f1_score(y_actual, y_predicted, average='macro')
 
     return accuracy, precision, recall, f1
 
@@ -81,13 +81,12 @@ clean_data(test_data)
 Encoder = LabelEncoder()
 train_data['Label_Encoded'] = Encoder.fit_transform(train_data['Label'])
 
-classes = np.unique(train_data['Label_Encoded'])
-
-# list_of_train_data = np.array_split(train_data, 5)
 
 # separating features for our model from the target variable
 x_train_data = train_data['Content']
 y_train_data = train_data['Label_Encoded']
+
+test_data = test_data['Content']
 
 cls_stats = {}
 
@@ -145,3 +144,9 @@ print("Accuracy:" + str(np.mean(scores_rf_accuracy)))
 print("Precision:" + str(np.mean(scores_rf_precision)))
 print("Recall:" + str(np.mean(scores_rf_recall)))
 print("F1:" + str(np.mean(scores_rf_f1)))
+
+test_data_ = tfidf_vectorizer.fit_transform(test_data)
+test_data_svd = svd.fit_transform(test_data_)
+
+predictedValues = sgd_classifier.predict(test_data_svd)
+predictedValues_rand_forest = rand_forest_classifier.predict(test_data_svd)
