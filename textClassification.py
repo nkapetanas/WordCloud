@@ -1,5 +1,4 @@
-import string
-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from nltk.corpus import stopwords
@@ -13,6 +12,8 @@ from sklearn.metrics import recall_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 
+from plot_learning_curve import plot_learning_curve
+
 DATASET_PATH_TRAIN = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/train.csv"
 DATASET_PATH_TEST = "C:/Users/Delta/PycharmProjects/WordCloud/dataset/test_without_labels.csv"
 
@@ -21,19 +22,13 @@ TOKENS_ALPHANUMERIC = '[A-Za-z0-9]+(?=\\s+)'
 stop = set(stopwords.words('english'))
 
 
+def plotPrecisionRecallCurve(classifier, x_, y_):
+    plot_learning_curve(classifier, 'Learning Curve', x_, y_, cv=5)
+
+
 def read_dataset(dataset):
     df = pd.read_csv(dataset, encoding='utf-8')
     return df
-
-
-def remove_punctuation(text):
-    no_punct = "".join([word for word in text if word not in string.punctuation])
-    return no_punct
-
-
-def remove_stopwords(text):
-    textWithoutStopwords = [word for word in text if word not in stopwords.words('english')]
-    return textWithoutStopwords
 
 
 def clean_data(dataframe):
@@ -56,26 +51,23 @@ def calculate_metrics(y_actual, y_predicted):
     f1 = f1_score(y_actual, y_predicted, average='macro')
 
     return accuracy, precision, recall, f1
-train_data = read_dataset(DATASET_PATH_TRAIN)
 
+
+train_data = read_dataset(DATASET_PATH_TRAIN)
 test_data = read_dataset(DATASET_PATH_TEST)
 
 # cleaning of data
 clean_data(train_data)
-
 clean_data(test_data)
+
 Encoder = LabelEncoder()
 
-
 train_data['Label_Encoded'] = Encoder.fit_transform(train_data['Label'])
+
 # separating features for our model from the target variable
 x_train_data = train_data['Content']
-
 y_train_data = train_data['Label_Encoded']
-
 test_data_ = test_data['Content']
-
-cls_stats = {}
 
 kfold = KFold(n_splits=5, random_state=42, shuffle=True)
 
@@ -125,6 +117,14 @@ for train_index, test_index in kfold.split(x_train_data):
     scores_rf_recall.append(recall)
     scores_rf_f1.append(f1)
 
+input_data_to_plot = vectorizer.transform(x_train_data)
+plotPrecisionRecallCurve(sgd_classifier, input_data_to_plot, y_train_data)
+plt.show()
+
+input_data_to_plot = vectorizer.transform(x_train_data)
+plotPrecisionRecallCurve(rand_forest_classifier, input_data_to_plot, y_train_data)
+plt.show()
+
 print("SGDClassifier metrics")
 print("Accuracy:" + str(np.mean(scores_svm_accuracy)))
 print("Precision:" + str(np.mean(scores_svm_precision)))
@@ -141,7 +141,6 @@ test_data_ = vectorizer.fit_transform(test_data_)
 
 predictedValues = sgd_classifier.predict(test_data_)
 predictedValues_rand_forest = rand_forest_classifier.predict(test_data_)
-
 
 createCSV(predictedValues, "testSet_categories.csv")
 createCSV(predictedValues_rand_forest, "testSet_categories2.csv")
